@@ -43,8 +43,7 @@ public class ServicePart {
     long durationMs = (endTime - startTime) / 1_000_000;
     System.out.println(output.toString() + "Elapsed time in miliseconds (Balzegraph): "
         + Long.toString(durationMs));
-    System.out.println(
-        "-----------------------------------------------------------------------------------------------------------------------------------------------");
+    System.out.println("-----------------------------------------------------------");
     return output.toString() + "\n" + "Elapsed time in miliseconds (Balzegraph): "
         + Long.toString(durationMs) + "\n";
   }
@@ -81,8 +80,7 @@ public class ServicePart {
     long durationMs = (endTime - startTime) / 1_000_000;
     System.out.println(
         output.toString() + "Elapsed time in miliseconds (GraphDB): " + Long.toString(durationMs));
-    System.out.println(
-        "------------------------------------------------------------------------------------------------------------------------------------------------");
+    System.out.println("-----------------------------------------------------------");
     return output.toString() + "\n" + "Elapsed time in miliseconds (GraphDB): "
         + Long.toString(durationMs) + "\n";
   }
@@ -117,8 +115,7 @@ public class ServicePart {
 
     long durationMs = (endTime - startTime) / 1_000_000;
     System.out.println(output + "Elapsed time in milliseconds (Stardog): " + durationMs);
-    System.out.println(
-        "-----------------------------------------------------------------------------------------------------------------------------------------------");
+    System.out.println("-----------------------------------------------------------");
     return output + "Elapsed time in milliseconds (Stardog): " + durationMs + "\n";
   }
 }
