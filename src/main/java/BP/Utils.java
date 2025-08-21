@@ -11,6 +11,11 @@ public class Utils {
   private static String graphdbUrl321MB = "http://IBM-PF3DYWLV:7200/repositories/GB";
   private static String stardogUrl321MB = "BIG";
 
+  private static String blazegraphUrl1GB =
+      "http://172.25.176.1:9999/blazegraph/namespace/oneGB/sparql";
+  private static String graphdbUrl1GB = "http://IBM-PF3DYWLV:7200/repositories/BigDB";
+  private static String stardogUrl1GB = "GB";
+
   public static String getBlazegraphUrl64MB() {
     return blazegraphUrl64MB;
   }
@@ -27,8 +32,20 @@ public class Utils {
     return blazegraphUrl321MB;
   }
 
+  public static String getBlazegraphUrl1GB() {
+    return blazegraphUrl1GB;
+  }
+
   public static String getGraphdbUrl321MB() {
     return graphdbUrl321MB;
+  }
+
+  public static String getGraphdbUrl1GB() {
+    return graphdbUrl1GB;
+  }
+
+  public static String getStardogUrl1GB() {
+    return stardogUrl1GB;
   }
 
   public static String getStardogUrl321MB() {

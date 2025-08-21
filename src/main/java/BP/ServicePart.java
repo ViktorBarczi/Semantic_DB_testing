@@ -1,5 +1,7 @@
 package BP;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.complexible.stardog.api.Connection;
 import com.complexible.stardog.api.ConnectionConfiguration;
 import com.stardog.stark.query.BindingSet;
@@ -13,11 +15,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServicePart {
   // 1. Query Blazegraph or any SPARQL endpoint (using Apache Jena)
-  public String queryBlazegraph(String endpointUrl, String queryString) {
+  public List<Output> queryBlazegraph(String endpointUrl, String queryString) {
     System.out.println("Querying Blazegraph...");
     long startTime = 0;
     long endTime = 0;
-    StringBuilder output = new StringBuilder();
+    List<Output> outputList = new ArrayList<>();
     try {
       QueryExecution qexec = QueryExecutionFactory.sparqlService(endpointUrl, queryString);
 
@@ -27,33 +29,32 @@ public class ServicePart {
 
       while (results.hasNext()) {
         QuerySolution solution = results.next();
-        output.append("subject: ")
-            .append(solution.get("subject") != null ? solution.get("subject").toString() : "")
-            .append(",\n").append("predicate: ")
-            .append(solution.get("predicate") != null ? solution.get("predicate").toString() : "")
-            .append(",\n").append("object: ")
-            .append(solution.get("object") != null ? solution.get("object").toString() : "")
-            .append(",\n");
+        Output output =
+            new Output(solution.get("subject") != null ? solution.get("subject").toString() : "",
+                solution.get("predicate") != null ? solution.get("predicate").toString() : "",
+                solution.get("object") != null ? solution.get("object").toString() : "",
+                "Blazegraph", Long.toString((endTime - startTime) / 1_000_000));
 
+        outputList.add(output);
+
+        System.out.println("subject: " + output.getSubject() + ",\n" + "predicate: "
+            + output.getPredicate() + ",\n" + "object: " + output.getObject() + ",\n"
+            + "elapsedTime (Blazegraph): " + output.getElapsedTime());
       }
 
     } catch (Exception e) {
       e.printStackTrace();
     }
-    long durationMs = (endTime - startTime) / 1_000_000;
-    System.out.println(output.toString() + "Elapsed time in miliseconds (Balzegraph): "
-        + Long.toString(durationMs));
     System.out.println("-----------------------------------------------------------");
-    return output.toString() + "\n" + "Elapsed time in miliseconds (Balzegraph): "
-        + Long.toString(durationMs) + "\n";
+    return outputList;
   }
 
   // 2. Query GraphDB using SPARQL endpoint (also Jena)
-  public String queryGraphDB(String endpointUrl, String queryString) {
+  public List<Output> queryGraphDB(String endpointUrl, String queryString) {
     System.out.println("Querying GraphDB...");
     long startTime = 0;
     long endTime = 0;
-    StringBuilder output = new StringBuilder();
+    List<Output> outputList = new ArrayList<>();
     try {
       QueryExecution qexec = QueryExecutionFactory.sparqlService(endpointUrl, queryString);
 
@@ -63,13 +64,17 @@ public class ServicePart {
 
       while (results.hasNext()) {
         QuerySolution solution = results.next();
-        output.append("subject: ")
-            .append(solution.get("subject") != null ? solution.get("subject").toString() : "")
-            .append(",\n").append("predicate: ")
-            .append(solution.get("predicate") != null ? solution.get("predicate").toString() : "")
-            .append(",\n").append("object: ")
-            .append(solution.get("object") != null ? solution.get("object").toString() : "")
-            .append(",\n");
+        Output output =
+            new Output(solution.get("subject") != null ? solution.get("subject").toString() : "",
+                solution.get("predicate") != null ? solution.get("predicate").toString() : "",
+                solution.get("object") != null ? solution.get("object").toString() : "", "GraphDB",
+                Long.toString((endTime - startTime) / 1_000_000));
+
+        outputList.add(output);
+
+        System.out.println("subject: " + output.getSubject() + ",\n" + "predicate: "
+            + output.getPredicate() + ",\n" + "object: " + output.getObject() + ",\n"
+            + "elapsedTime (GraphDB): " + output.getElapsedTime());
 
       }
 
@@ -77,21 +82,17 @@ public class ServicePart {
 
       e.printStackTrace();
     }
-    long durationMs = (endTime - startTime) / 1_000_000;
-    System.out.println(
-        output.toString() + "Elapsed time in miliseconds (GraphDB): " + Long.toString(durationMs));
     System.out.println("-----------------------------------------------------------");
-    return output.toString() + "\n" + "Elapsed time in miliseconds (GraphDB): "
-        + Long.toString(durationMs) + "\n";
+    return outputList;
   }
 
   // 3. Query Stardog using Stardog Java Client
-  public String queryStardog(String endpointUrl, String queryString) {
+  public List<Output> queryStardog(String endpointUrl, String queryString) {
     System.out.println("Querying Stardog...");
 
     long startTime = 0;
     long endTime = 0;
-    StringBuilder output = new StringBuilder();
+    List<Output> outputList = new ArrayList<>();
 
     Connection conn =
         ConnectionConfiguration.to(endpointUrl).server("https://sd-d3307c49.stardog.cloud:5820")
@@ -103,19 +104,20 @@ public class ServicePart {
 
     while (results.hasNext()) {
       BindingSet binding = results.next();
-      output.append("subject: ")
-          .append(binding.value("subject") != null ? binding.value("subject").get().toString() : "")
-          .append(",\n").append("predicate: ")
-          .append(
-              binding.value("predicate") != null ? binding.value("predicate").get().toString() : "")
-          .append(",\n").append("object: ")
-          .append(binding.value("object") != null ? binding.value("object").get().toString() : "")
-          .append(",\n");
+      Output output = new Output(
+          binding.value("subject") != null ? binding.value("subject").get().toString() : "",
+          binding.value("predicate") != null ? binding.value("predicate").get().toString() : "",
+          binding.value("object") != null ? binding.value("object").get().toString() : "",
+          "Stardog", Long.toString((endTime - startTime) / 1_000_000));
+
+      outputList.add(output);
+
+      System.out.println("subject: " + output.getSubject() + ",\n" + "predicate: "
+          + output.getPredicate() + ",\n" + "object: " + output.getObject() + ",\n"
+          + "elapsedTime (Stardog): " + output.getElapsedTime());
     }
 
-    long durationMs = (endTime - startTime) / 1_000_000;
-    System.out.println(output + "Elapsed time in milliseconds (Stardog): " + durationMs);
     System.out.println("-----------------------------------------------------------");
-    return output + "Elapsed time in milliseconds (Stardog): " + durationMs + "\n";
+    return outputList;
   }
 }
